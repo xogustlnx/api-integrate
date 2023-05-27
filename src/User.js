@@ -1,34 +1,30 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React from "react";
 import axios from "axios";
 import useAsync from "./useAsync";
 
-async function getUsers() {
+async function getUser(id) {
   const response = await axios.get(
-    "https://jsonplaceholder.typicode.com/users"
+    `https://jsonplaceholder.typicode.com/users/${id}`
   );
   return response.data;
 }
 
-function Users() {
-  const [state, refetch] = useAsync(getUsers, [], true);
-  const { loading, data: users, error } = state;
+function User({ id }) {
+  const [state] = useAsync(() => getUser(id), [id]);
+  const { loading, data: user, error } = state;
 
   if (loading) return <div>로딩중</div>;
   if (error) return <div>에러가 발생</div>;
-  if (!users) return <button onClick={refetch}>불러오기</button>;
+  if (!user) return null;
 
   return (
-    <>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {user.username} ({user.name})
-          </li>
-        ))}
-      </ul>
-      <button onClick={refetch}>다시 불러오기</button>
-    </>
+    <div>
+      <h2>{user.username}</h2>
+      <p>
+        <b>Email:</b> {user.email}
+      </p>
+    </div>
   );
 }
 
-export default Users;
+export default User;
