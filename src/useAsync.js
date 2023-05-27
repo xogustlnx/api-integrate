@@ -21,11 +21,11 @@ function reducer(state, { type, data, error }) {
         error: error,
       };
     default:
-      throw new Error(`Unhandled action type: ${action.type}`);
+      throw new Error(`Unhandled action type: ${type}`);
   }
 }
 
-function useAsync(callback, deps = []) {
+function useAsync(callback, deps=[], skip=false) {
   const [state, dispatch] = useReducer(reducer, {
     loading: false,
     data: null,
@@ -43,6 +43,7 @@ function useAsync(callback, deps = []) {
   };
 
   useEffect(() => {
+    if(skip) return;
     fetchData();
   }, deps);
 
